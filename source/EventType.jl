@@ -3,7 +3,7 @@ abstract type Event end
 
 #- Disappear
 struct Disappear <: Event
-end 
+end
 
 #- Appear
 struct Appear <: Event
@@ -11,7 +11,7 @@ end
 #- Move
 struct Move <: Event
     dr::Vector{Int64}
-end 
+end
 
 #- Swallow
 struct Swallow <: Event
@@ -23,5 +23,6 @@ struct Resize <: Event
 end
 
 struct UniverseEvent
-    condition::String
+    should
+    introduce!
 end
