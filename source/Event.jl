@@ -16,7 +16,7 @@ end
 
 #- ReSize
 function _Execute!(universe::Universe, event::ReSize, obj::Vacancy)
-    newFres = obj.eventsContainer.fres*obj.size/event.newSize
+    newFres = obj.eventsContainer.fres*(obj.size/event.newSize)^3
     Introduce!(universe, [ReFres(newFres)], obj)
     obj.size = event.newSize
 end
@@ -91,7 +91,7 @@ end
 
 function Interact!(universe::Universe, events::Vector{T3}, obj::T1, enObj::T2) where {T1<:Union{Vacancy, Interstitial}, T2<:Union{Vacancy, Interstitial}, T3<:Event}
     distance = Distance(obj, enObj, universe)
-    if distance <= (obj.size/4.0/3.14*3)^1/3 + (enObj.size/4.0/3.14*3)^1/3
+    if distance <= (obj.size/4.0/3.14*3)^(1/3) + (enObj.size/4.0/3.14*3)^(1/3)
         Introduce!(universe, [Swallow()], obj, enObj)
     end
 end

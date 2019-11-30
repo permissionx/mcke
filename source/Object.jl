@@ -17,7 +17,9 @@ function IntroduceRandomDefects(universe::Universe, numDefects::Int64, maxSize::
         defect = sample([1,2])
         if defect == 1
             Introduce!(universe, [Appear()], CreateRandomVacancy(universe, maxSize))
+            Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, maxSize))
         else
+            Introduce!(universe, [Appear()], CreateRandomVacancy(universe, maxSize))
             Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, maxSize))
         end
     end

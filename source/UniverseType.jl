@@ -6,7 +6,7 @@ function Map(nDimension::Int64)
     Map(generateIntersitialDirections(nDimension))
 end
 
-mutable struct Box 
+struct Box 
     map::Map
     nDimension::Int64
     halfLength::Vector{Float64}

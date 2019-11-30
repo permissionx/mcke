@@ -25,7 +25,7 @@ function Vacancy(position::Vector{Int64}, size::Int64)
     events[6] = Move([-1,-1,1])
     events[7] = Move([-1,1,-1])
     events[8] = Move([-1,-1,-1])
-    fres = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]/size
+    fres = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]/size^3
     fre = sum(fres)
     eventsContainer = EventsContainer(fre, fres, events)
     Vacancy(0, 1, position, size, eventsContainer, false)
@@ -44,7 +44,7 @@ function Interstitial(position::Vector{Int64}, size::Int64, direction::Vector{In
     events = Vector{Event}(undef, 2)
     events[1] = Slip(1)
     events[2] = Slip(-1)
-    fres = [100,100]/size
+    fres = [100,100]/(size^0.5)
     fre = sum(fres)
     eventsContainer = EventsContainer(fre, fres, events)
     Interstitial(0, 2, position, size, direction, eventsContainer, false)
