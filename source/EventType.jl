@@ -1,4 +1,4 @@
-# Events
+# Obj Events
 abstract type Event end
 
 #- Disappear
@@ -22,7 +22,4 @@ struct Resize <: Event
     newSize::Int64
 end
 
-struct UniverseEvent
-    should
-    introduce!
-end
+

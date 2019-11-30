@@ -1,6 +1,8 @@
-println("Hello World")
-println("This is line 2")
-x = 2
-for _ in 1:1000
-    1
+using PProf 
+function test()
+    for _ in 1:10
+        println("Hello World")
+    end
 end
+
+@pprof test()

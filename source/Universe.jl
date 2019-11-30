@@ -59,41 +59,29 @@ function ChooseRandomEvent(obj::Obj)
         i += 1
     end
 end
-#########################
 
-function GenerateNeccessaryEvent()
-    function Should(universe::Universe)
-        true
-    end
-    function Intro(universe::Universe)
-        universe.thermo.iterTime += 1
-    end
-    UniverseEvent(Should, Intro)
+################
+function dTime(universe::Universe)
+    -log(rand())/universe.fre
 end
-
-function addUniverseEvents(events::Vector{UniverseEvent})
-    neccessaryEvent = GenerateNeccessaryEvent()
-    Vector{UniverseEvent}(vcat([neccessaryEvent], events))
-end
-
 ################
 
 #- Main
-function Evolve(universe::Universe, universeEvents::Vector{UniverseEvent})
-    while true
-        
-        for n = 1:length(universeEvents)   
-            if universeEvents[n].should(universe)
-                universeEvents[n].introduce!(universe)
-            end
-        end
+function InitlUniverse()
+    Universe(boundary, initTemp)
+end
 
-        if universe.stop
-            break
-        end
+function EssentialEvents(universe::Universe)
+    if length(universe) > 0
         obj, event = ChooseRandom(universe)
         Introduce!(universe, [event], obj)
     end
+    if universe.time == Inf
+        universe.time = universe.cache['time']
+    end
+    universe.cache['time'] = universe.time
+    universe.thermo.time += dTime(universe)
+    universe.thermo.iterTime += 1
 end
 
 

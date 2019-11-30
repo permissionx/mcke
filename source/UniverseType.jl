@@ -37,12 +37,14 @@ mutable struct Universe
     fre::Float64
     box::Box
     thermo::Thermo
+    cache::Dict{String, Union{Int64,Float64}}
     stop::Bool
 end
 function Universe(boundary, initTemp)
     box = Box(boundary)
     thermo = Thermo(initTemp)
-    Universe(Vector{Obj}(), 0, box, thermo, false)
+    cache = Dict{String, Union{Int64,Float64}}()
+    Universe(Vector{Obj}(), 0, box, thermo, cache, false)
 end
 
 # Methods of Universe
