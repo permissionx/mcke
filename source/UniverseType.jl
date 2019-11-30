@@ -23,28 +23,28 @@ end
 
 mutable struct Thermo
     time::Float64
+    lastTime::Float64
     iterTime::Int64
     Temp::Float64
 end
 function Thermo(initTemp::Float64)
-    Thermo(0.0, 0, initTemp)
+    Thermo(0.0, 0.0, 0, initTemp)
 end
 
 # Global type Universe
 # Contain all the objects and universal properties
 mutable struct Universe
     objs::Vector{Obj}
+    maxID::Int64
     fre::Float64
     box::Box
     thermo::Thermo
-    cache::Dict{String, Union{Int64,Float64}}
     stop::Bool
 end
 function Universe(boundary, initTemp)
     box = Box(boundary)
     thermo = Thermo(initTemp)
-    cache = Dict{String, Union{Int64,Float64}}()
-    Universe(Vector{Obj}(), 0, box, thermo, cache, false)
+    Universe(Vector{Obj}(), 0, 0, box, thermo, false)
 end
 
 # Methods of Universe
@@ -52,13 +52,10 @@ function Base.getindex(universe::Universe, n::Int64)
     universe.objs[n]
 end
 function Base.push!(universe::Universe, obj::Obj)
+    universe.maxID += 1
+    obj.id = universe.maxID
     push!(universe.objs, obj)
     universe.fre += obj.eventsContainer.fre
-end
-function Base.push!(universe::Universe, objs::Vector{T}) where {T <: Obj}
-    for obj in objs
-        push!(universe, obj)
-    end
 end
 function Base.delete!(universe::Universe, obj::Obj)
     deleteat!(universe.objs, findfirst(member->member==obj,universe.objs))

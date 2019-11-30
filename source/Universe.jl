@@ -27,6 +27,15 @@ function Introduce!(universe::Universe, events::Vector{T}, obj::Obj...) where {T
     Interact!(universe, events, obj[1])
 end
 
+function Introduce!(universe::Universe, events::Vector{T}, obj::Obj...) where {T <: HighLvlEvent}
+    for event in events
+        if obj[1].dismissed
+            return
+        end
+        _Execute!(universe, event, obj...)
+    end
+end
+
 
 # Process Controler
 #- Choose event randomly
@@ -66,7 +75,7 @@ function dTime(universe::Universe)
 end
 ################
 
-#- Main
+#- evovle
 function InitlUniverse()
     Universe(boundary, initTemp)
 end
@@ -76,13 +85,50 @@ function EssentialEvents(universe::Universe)
         obj, event = ChooseRandom(universe)
         Introduce!(universe, [event], obj)
     end
-    if universe.time == Inf
-        universe.time = universe.cache['time']
-    end
-    universe.cache['time'] = universe.time
     universe.thermo.time += dTime(universe)
     universe.thermo.iterTime += 1
+    if universe.thermo.time != Inf
+        universe.thermo.lastTime = universe.thermo.time
+    end
 end
+
+#- IO
+function dump(universe::Universe, filename::String)
+    # LAMMPS dump format, for ovito reading.
+    # Need to update to fit any obj attributs range.
+    if universe.thermo.iterTime == 0
+        openStype = "w"
+    else
+        openStype = "a"
+    end
+    open(filename, openStype) do io
+        write(io,"ITEM: TIMESTEP\n$(universe.thermo.iterTime)\n")
+        write(io,"ITEM: NUMBER OF ATOMS\n$(length(universe))\n")
+        write(io,"ITEM: BOX BOUNDS ")
+        for _ in 1:universe.box.nDimension
+            write(io,"pp ")
+        end
+        write(io,"\n")
+        for d in 1:universe.box.nDimension
+            write(io, "$(universe.box.boundary[d,1]) $(universe.box.boundary[d,2])\n")
+        end
+        write(io, "ITEM: ATOMS id type ")
+        dimensionName = ("x","y","z")
+        for d in 1:universe.box.nDimension
+            write(io, "$(dimensionName[d]) ")
+        end
+        write(io, "size\n")
+        for obj in universe
+            write(io, "$(obj.id) $(obj.typeNum) ")
+            for d in 1:universe.box.nDimension
+                write(io, "$(obj.position[d]) ") 
+            end
+            write(io, "$(obj.size)\n")
+        end
+    end
+end
+
+
 
 
 
