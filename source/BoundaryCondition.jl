@@ -20,14 +20,15 @@ module OpenBoundaryCondition
         for d in 1:universe.box.nDimension
             if obj.position[d] < universe.box.boundary[d,1]
                 Base.Main.Introduce!(universe, [Base.Main.Disappear()], obj)
-                #obj.position[d] += universe.box.length[d]
             elseif obj.position[d] >= universe.box.boundary[d,2]
-                #obj.position[d] -= universe.box.length[d]
                 Base.Main.Introduce!(universe, [Base.Main.Disappear()], obj)
             end
         end
     end
 end
+
+
+
 
 module PPPBoundaryCondition
     export DVector, Distance, Shift!

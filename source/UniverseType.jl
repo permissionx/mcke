@@ -3,7 +3,7 @@ struct Map
     interstitialDirections::Vector{Vector{Int64}}
 end
 function Map(nDimension::Int64)
-    Map(generateIntersitialDirections(nDimension))
+    Map(GenerateIntersitialDirections(nDimension))
 end
 
 struct Box 

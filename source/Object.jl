@@ -11,20 +11,20 @@ function CreateRandomInterstitial(universe::Universe, maxSize::Int64)
     Interstitial(position, size, direction)
 end
 
-function generateIntersitialDirections(nDimension::Int64)
+function GenerateIntersitialDirections(nDimension::Int64)
     nDimension -= 1
     directions = Vector{Vector{Int64}}()
     direction = Vector{Int64}(undef, nDimension)
-    iterIntersitialDirections!(directions, direction, 1, nDimension)
+    IterIntersitialDirections!(directions, direction, 1, nDimension)
     vcat.([1],directions)
 end
 
-function iterIntersitialDirections!(directions::Vector{Vector{Int64}}, 
+function IterIntersitialDirections!(directions::Vector{Vector{Int64}}, 
     direction::Vector{Int64}, d::Int64, nDimension::Int64)
     for i in [1,-1]
         direction[d] = i
         if d < nDimension
-            iterIntersitialDirections!(directions, direction, d+1, nDimension)
+            IterIntersitialDirections!(directions, direction, d+1, nDimension)
         end
         if d == nDimension
             push!(directions, deepcopy(direction))
