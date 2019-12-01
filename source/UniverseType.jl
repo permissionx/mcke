@@ -41,6 +41,7 @@ mutable struct Universe
     fre::Float64
     box::Box
     thermo::Thermo
+    dumpFileNames::Vector{String}
     cache::Dict{String, Union{Int64, Float64}}
     stop::Bool
 end
@@ -50,7 +51,8 @@ function Universe(boundary, initTemp)
     universeEventContainer = EventContainer{UniverseEvent}()
     universeEventHolder = UniverseEventHolder(universeEventContainer)
     Universe(Vector{DefectObj}(), [universeEventHolder], 
-            0, 0, box, thermo, Dict{String, Union{Int64, Float64}}(), false)
+            0, 0, box, thermo, 
+            Vector{String}(), Dict{String, Union{Int64, Float64}}(), false)
 end
 
 # Methods of Universe

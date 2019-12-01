@@ -113,13 +113,14 @@ function EssentialEvents(universe::Universe)
 end
 
 #- IO
-function dump(universe::Universe, filename::String)
+function Dump(universe::Universe, filename::String)
     # LAMMPS dump format, for ovito reading.
     # Need to update to fit any obj attributs range.
-    if universe.thermo.iterTime == 0
+    if ! (filename in universe.dumpFileNames)
         openStype = "w"
+        push!(universe.dumpFileNames, filename)
     else
-        openStype = "a+"
+        openStype = "a"
     end
     open(filename, openStype) do io
         write(io,"ITEM: TIMESTEP\n$(universe.thermo.iterTime)\n")
@@ -147,8 +148,6 @@ function dump(universe::Universe, filename::String)
         end
     end
 end
-
-
 
 
 
