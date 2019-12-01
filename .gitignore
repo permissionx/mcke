@@ -2,7 +2,7 @@
 *.jl.*.cov
 *.jl.mem
 *.dump
-test.jl
+*.ipynb
+tset*
 profile.pb.gz
 deps/deps.jl
-test_run*
