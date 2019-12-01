@@ -11,21 +11,6 @@ function CreateRandomInterstitial(universe::Universe, maxSize::Int64)
     Interstitial(position, size, direction)
 end
 
-
-function IntroduceRandomDefects(universe::Universe, numDefects::Int64, maxSize::Int64)
-    for i in 1:numDefects
-        defect = sample([1,2])
-        if defect == 1
-            Introduce!(universe, [Appear()], CreateRandomVacancy(universe, maxSize))
-            Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, maxSize))
-        else
-            Introduce!(universe, [Appear()], CreateRandomVacancy(universe, maxSize))
-            Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, maxSize))
-        end
-    end
-end
-
-
 function generateIntersitialDirections(nDimension::Int64)
     nDimension -= 1
     directions = Vector{Vector{Int64}}()

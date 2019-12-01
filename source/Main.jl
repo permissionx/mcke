@@ -11,7 +11,12 @@ include("UniverseType.jl")
 include("Event.jl")
 include("Universe.jl")
 include("NeighbourObj.jl")
-include("BoundaryCondition.jl")  
+include("BoundaryCondition.jl") 
+if boundaryCondition == "open"
+    using .OpenBoundaryCondition
+elseif boundaryCondition == "PPP"
+    using .PPPBoundaryCondition
+end 
 include("Object.jl")
 
 

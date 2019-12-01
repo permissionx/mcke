@@ -31,35 +31,45 @@ function Thermo(initTemp::Float64)
     Thermo(0.0, 0.0, 0, initTemp)
 end
 
+EventContainer{UniverseEvent}() = EventContainer{UniverseEvent}(0,[],[])
 # Global type Universe
 # Contain all the objects and universal properties
 mutable struct Universe
-    objs::Vector{Obj}
+    objs::Vector{DefectObj}
+    universeEventHolders::Vector{UniverseEventHolder}
     maxID::Int64
     fre::Float64
     box::Box
     thermo::Thermo
+    cache::Dict{String, Union{Int64, Float64}}
     stop::Bool
 end
 function Universe(boundary, initTemp)
     box = Box(boundary)
     thermo = Thermo(initTemp)
-    Universe(Vector{Obj}(), 0, 0, box, thermo, false)
+    universeEventContainer = EventContainer{UniverseEvent}()
+    universeEventHolder = UniverseEventHolder(universeEventContainer)
+    Universe(Vector{DefectObj}(), [universeEventHolder], 
+            0, 0, box, thermo, Dict{String, Union{Int64, Float64}}(), false)
 end
 
 # Methods of Universe
 function Base.getindex(universe::Universe, n::Int64)
     universe.objs[n]
 end
-function Base.push!(universe::Universe, obj::Obj)
+function Base.push!(universe::Universe, obj::DefectObj)
     universe.maxID += 1
     obj.id = universe.maxID
     push!(universe.objs, obj)
-    universe.fre += obj.eventsContainer.fre
+    universe.fre += obj.eventContainer.fre
 end
-function Base.delete!(universe::Universe, obj::Obj)
+function Base.push!(universe::Universe, obj::UniverseEventHolder)
+    push!(universe.universeEventHolders, obj)
+    universe.fre += obj.eventContainer.fre
+end
+function Base.delete!(universe::Universe, obj::DefectObj)
     deleteat!(universe.objs, findfirst(member->member==obj,universe.objs))
-    universe.fre -= obj.eventsContainer.fre
+    universe.fre -= obj.eventContainer.fre
 end
 function Base.iterate(universe::Universe)
     iterate(universe.objs)

@@ -1,7 +1,11 @@
-# Obj Events
 abstract type Event end
-abstract type BaseEvent <: Event end # Basic || influencial
-abstract type HighLvlEvent <: Event end #
+abstract type ObjEvent <: Event end
+abstract type BaseEvent <: ObjEvent end # Basic || influencial
+abstract type HighLvlEvent <: ObjEvent end #
+abstract type UniverseEvent <: Event end
+
+# Obj Events
+
 
 #- Base
 #-- Disappear
@@ -42,3 +46,17 @@ struct ReFres <: HighLvlEvent
     newFres::Vector{Float64}
 end
 
+# Universe Event
+struct IntroduceRandomDefects <: UniverseEvent
+    numDefects::Int64
+    maxSize::Int64
+end
+
+
+
+# Event Container
+mutable struct EventContainer{T<:Event}
+    fre::Float64
+    fres::Vector{Float64}
+    events::Vector{T}
+end

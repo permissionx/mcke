@@ -1,27 +1,27 @@
 #- Disappear
-function _Execute!(universe::Universe, event::Disappear, obj::Obj)
+function _Execute!(universe::Universe, event::Disappear, obj::DefectObj)
     delete!(universe, obj)
     obj.dismissed = true
 end
 
 #- Appear
-function _Execute!(universe::Universe, event::Appear, obj::Obj)
+function _Execute!(universe::Universe, event::Appear, obj::DefectObj)
     push!(universe, obj)
 end
 
 #- Move
-function _Execute!(universe::Universe, event::Move, obj::Obj)
+function _Execute!(universe::Universe, event::Move, obj::DefectObj)
     Shift!(obj, event.dr, universe)
 end
 
 #- ReSize
 function _Execute!(universe::Universe, event::ReSize, obj::Vacancy)
-    newFres = obj.eventsContainer.fres*(obj.size/event.newSize)^3
+    newFres = obj.eventContainer.fres*(obj.size/event.newSize)^3
     Introduce!(universe, [ReFres(newFres)], obj)
     obj.size = event.newSize
 end
 function _Execute!(universe::Universe, event::ReSize, obj::Interstitial)
-    newFres = obj.eventsContainer.fres*(obj.size/event.newSize)^(1/10)
+    newFres = obj.eventContainer.fres*(obj.size/event.newSize)^(1/10)
     Introduce!(universe, [ReFres(newFres)], obj)
     obj.size = event.newSize
 end
@@ -29,16 +29,16 @@ end
 #- ReFres
 function _Execute!(universe::Universe, event::ReFres, obj::Obj)
     newFre = sum(event.newFres)
-    universe.fre = universe.fre - obj.eventsContainer.fre + newFre
-    obj.eventsContainer.fres = event.newFres
-    obj.eventsContainer.fre = newFre
+    universe.fre = universe.fre - obj.eventContainer.fre + newFre
+    obj.eventContainer.fres = event.newFres
+    obj.eventContainer.fre = newFre
 end
 
 #- RediRsection
 function _Execute!(universe::Universe, event::ReDirection, obj::Interstitial)
     newEvent = ReDirection(obj.direction)
-    push!(obj.eventsContainer.events, newEvent)
-    filter!(x-> x.newDirection = event.newDirection, obj.eventsContainer.events)
+    push!(obj.eventContainer.events, newEvent)
+    filter!(x-> x.newDirection = event.newDirection, obj.eventContainer.events)
     obj.direction = event.newDirection
 end
 
@@ -83,16 +83,31 @@ function _Execute!(universe::Universe, event::Swallow, obj1::T1, obj2::T2) where
 end
 
 # Interact
-function Interact!(universe::Universe, events::Vector{Event}, obj::Obj, enObj::Obj)
+function Interact!(universe::Universe, events::Vector{ObjEvent}, obj::DefectObj, enObj::DefectObj)
 end
 
-function Interact!(universe::Universe, events::Vector{Disappear}, obj::Obj, enObj::Obj) 
+function Interact!(universe::Universe, events::Vector{Disappear}, obj::DefectObj, enObj::DefectObj) 
 end
 
 function Interact!(universe::Universe, events::Vector{T3}, obj::T1, enObj::T2) where {T1<:Union{Vacancy, Interstitial}, T2<:Union{Vacancy, Interstitial}, T3<:Event}
     distance = Distance(obj, enObj, universe)
     if distance <= (obj.size/4.0/3.14*3)^(1/3) + (enObj.size/4.0/3.14*3)^(1/3)
         Introduce!(universe, [Swallow()], obj, enObj)
+    end
+end
+
+
+# Universe Evnets
+function _Execute!(universe::Universe, event::IntroduceRandomDefects, obj::UniverseEventHolder...)
+    for i in 1:event.numDefects
+        defect = sample([1,2])
+        if defect == 1
+            Introduce!(universe, [Appear()], CreateRandomVacancy(universe, event.maxSize))
+            Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, event.maxSize))
+        else
+            Introduce!(universe, [Appear()], CreateRandomVacancy(universe, event.maxSize))
+            Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, event.maxSize))
+        end
     end
 end
 

@@ -1,8 +1,15 @@
 using Distributions
 
 #-- Events
+function DefineUniverseEvent(universe::Universe, event::IntroduceRandomDefects, fre::Float64)
+    eventContainer = universe.universeEventHolders[1].eventContainer
+    push!(eventContainer.events, event)
+    newFres = vcat(eventContainer.fres, fre)
+    Introduce!(universe, [ReFres(newFres)], universe.universeEventHolders[1])
+end
+
 # Neccessary Appendix
-function Interact!(universe::Universe, events::Vector{T}, obj::Obj) where {T <: Event}
+function Interact!(universe::Universe, events::Vector{T}, obj::DefectObj) where {T <: ObjEvent}
     enObjs = FindNeighbourObjs(universe, obj)
     for enObj in enObjs
         if enObj == obj
@@ -15,7 +22,8 @@ function Interact!(universe::Universe, events::Vector{T}, obj::Obj) where {T <: 
     end
 end
 
-function Introduce!(universe::Universe, events::Vector{T}, obj::Obj...) where {T <: Event}
+
+function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) where {T <: ObjEvent}
     # Maybe dangerous here, because the other objs not examined if dismissed.
     # So, other objs have to be chosen from the universe, making sure the existing of the objs.
     for event in events
@@ -27,7 +35,7 @@ function Introduce!(universe::Universe, events::Vector{T}, obj::Obj...) where {T
     Interact!(universe, events, obj[1])
 end
 
-function Introduce!(universe::Universe, events::Vector{T}, obj::Obj...) where {T <: HighLvlEvent}
+function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) where {T <: HighLvlEvent}
     for event in events
         if obj[1].dismissed
             return
@@ -35,6 +43,19 @@ function Introduce!(universe::Universe, events::Vector{T}, obj::Obj...) where {T
         _Execute!(universe, event, obj...)
     end
 end
+
+function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) where {T <: UniverseEvent}
+    for event in events
+        _Execute!(universe, event, obj...)
+    end
+end
+
+function Introduce!(universe::Universe, events::Vector{T}, obj::UniverseObj...) where {T <: Event}
+    for event in events
+        _Execute!(universe, event, obj...)
+    end
+end
+Introduce!(universe::Universe, events::Vector{UniverseEvent}) = Introduce!(universe, events, UniverseObj(EventContainer{UniverseEvent}()))
 
 
 # Process Controler
@@ -48,8 +69,8 @@ end
 function ChooseRandomObj(universe::Universe)
     criNum = rand(Uniform(0.0,universe.fre))
     countNum = 0.0
-    for obj in universe
-        countNum += obj.eventsContainer.fre
+    for obj in vcat(universe.objs, universe.universeEventHolders)
+        countNum += obj.eventContainer.fre
         if countNum >= criNum
             return obj
         end
@@ -57,13 +78,13 @@ function ChooseRandomObj(universe::Universe)
 end
 
 function ChooseRandomEvent(obj::Obj)
-    criNum = rand(Uniform(0.0,obj.eventsContainer.fre))
+    criNum = rand(Uniform(0.0,obj.eventContainer.fre))
     countNum = 0.0
     i = 1
     while true
-        countNum += obj.eventsContainer.fres[i]
+        countNum += obj.eventContainer.fres[i]
         if countNum >= criNum
-            return obj.eventsContainer.events[i]
+            return obj.eventContainer.events[i]
         end
         i += 1
     end
@@ -81,10 +102,9 @@ function InitlUniverse()
 end
 
 function EssentialEvents(universe::Universe)
-    if length(universe) > 0
-        obj, event = ChooseRandom(universe)
-        Introduce!(universe, [event], obj)
-    end
+    # Need to be fixed when len(objs) == 0: try except non obj
+    obj, event = ChooseRandom(universe)
+    Introduce!(universe, [event], obj)
     universe.thermo.time += dTime(universe)
     universe.thermo.iterTime += 1
     if universe.thermo.time != Inf
