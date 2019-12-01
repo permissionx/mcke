@@ -16,7 +16,7 @@ function Distance(obj1::Obj, obj2::Obj, universe::Universe)
     for d in 1:universe.box.nDimension
         distance += dVector[d]^2
     end
-    return distance ^= 0.5
+    return distance = distance^0.5
 end
 
 function Shift!(obj::Obj, dr::Vector{Int64}, universe::Universe)

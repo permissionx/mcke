@@ -21,7 +21,7 @@ function _Execute!(universe::Universe, event::ReSize, obj::Vacancy)
     obj.size = event.newSize
 end
 function _Execute!(universe::Universe, event::ReSize, obj::Interstitial)
-    newFres = obj.eventsContainer.fres*(obj.size/event.newSize)^0.5
+    newFres = obj.eventsContainer.fres*(obj.size/event.newSize)^(1/10)
     Introduce!(universe, [ReFres(newFres)], obj)
     obj.size = event.newSize
 end

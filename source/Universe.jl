@@ -96,7 +96,7 @@ end
 function dump(universe::Universe, filename::String)
     # LAMMPS dump format, for ovito reading.
     # Need to update to fit any obj attributs range.
-    if universe.thermo.iterTime == 1
+    if universe.thermo.iterTime == 0
         openStype = "w"
     else
         openStype = "a+"

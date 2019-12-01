@@ -19,8 +19,8 @@ include("Object.jl")
 function Evolve()
     universe = InitlUniverse()
     while true
-        EssentialEvents(universe)
         CustomEvents(universe)
+        EssentialEvents(universe)
         StopEvents(universe)
         if universe.stop == true
             break
