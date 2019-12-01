@@ -6,3 +6,5 @@
 tset*
 profile.pb.gz
 deps/deps.jl
+source/test*
+.ipynb_checkpoints/
