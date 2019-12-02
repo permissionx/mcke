@@ -15,9 +15,17 @@ function Interact!(universe::Universe, events::Vector{T}, obj::DefectObj) where 
     #for i in 1:length(enObjs)
     #    enObj = enObjs[i]
     for enObj in enObjs
-        if enObj == obj 
+        if enObj == obj || enObj.dismissed
             continue
         end
+        #if enObj.id == 3224 
+        #    if enObj in universe.cellContainer.cells[1,9,7].objs
+        #        println(enObj in universe.cellContainer.cells[1,9,7].objs)
+        #        println(universe.thermo.iterTime)
+        #        sdfsdf
+        #    end
+        #end
+
         Interact!(universe, events, obj, enObj)
         if obj.dismissed
             break
@@ -28,6 +36,25 @@ end
 function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) where {T <: ObjEvent}
     # Maybe dangerous here, because the other objs not examined if dismissed.
     # So, other objs have to be chosen from the universe, making sure the existing of the objs.
+    #if universe.thermo.iterTime > 2000
+    #for o in universe
+    #    if o.id == 3224
+    #        if o in universe.cellContainer.cells[1,9,7].objs
+    #                println(o)
+    #                println(universe.thermo.iterTime)
+    #                println("197a")
+    #        elseif o in universe.cellContainer.cells[1,8,7].objs
+    #            println(o)
+    #            println(universe.thermo.iterTime)
+    #            println("187a")
+    #        end
+    #    end
+    #end
+    #end
+#   if universe.thermo.iterTime in [507,506] 
+#       println(typeof(events[1]),"    dddddddddddddddddd")
+#       println(obj[1],"    dddddddddddddddddd")
+#   end
     if obj[1].dismissed
         return
     end
@@ -38,6 +65,27 @@ function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) wh
 end
 
 function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) where {T <: HighLvlEvent}
+    
+ #  if universe.thermo.iterTime in [507,506] 
+ #      println(typeof(events[1]),"    eeedddddddddddddddddd")
+ #      println(obj[1],"    eeedddddddddddddddddd")
+ #  end
+   #if universe.thermo.iterTime > 2000
+   #for o in universe
+   #    if o.id == 3224
+   #        if o in universe.cellContainer.cells[1,9,7].objs
+   #                println(o)
+   #                println(universe.thermo.iterTime)
+   #                println("197b")
+   #        elseif o in universe.cellContainer.cells[1,8,7].objs
+   #            println(o)
+   #            println(universe.thermo.iterTime)
+   #            println("187b")
+   #        end
+   #    end
+   #end
+   #end
+
     if obj[1].dismissed
         return
     end
@@ -47,12 +95,40 @@ function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) wh
 end
 
 function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) where {T <: UniverseEvent}
+    #for o in universe
+    #    if o.id == 3224
+    #        if o in universe.cellContainer.cells[1,9,7].objs
+    #                println(o)
+    #                println(universe.thermo.iterTime)
+    #                println("197c")
+    #        elseif o in universe.cellContainer.cells[1,8,7].objs
+    #            println(o)
+    #            println(universe.thermo.iterTime)
+    #            println("187c")
+    #        end
+    #    end
+    #end
+#
     for event in events
         _Execute!(universe, event, obj...)
     end
 end
 
 function Introduce!(universe::Universe, events::Vector{T}, obj::UniverseObj...) where {T <: Event}
+  # for o in universe
+  #     if o.id == 3224
+  #         if o in universe.cellContainer.cells[1,9,7].os
+  #                 println(o)
+  #                 println(universe.thermo.iterTime)
+  #                 println("197d")
+  #         elseif o in universe.cellContainer.cells[1,8,7].os
+  #             println(o)
+  #             println(universe.thermo.iterTime)
+  #             println("187")
+  #         end
+  #     end
+  # end
+
     for event in events
         _Execute!(universe, event, obj...)
     end

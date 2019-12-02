@@ -42,6 +42,12 @@ function ReCell!(universe::Universe, obj::DefectObj)
     box = universe.box
     cellContainer = universe.cellContainer
     cellIndex = Vector{Int64}(undef, box.nDimension)
+    #if universe.thermo.iterTime == 503
+    #    println(obj.id,"     ########")
+    #end
+    #if universe.thermo.iterTime > 0# == 507
+    #    println(debug[1] in universe.cellContainer.cells[1,9,7].objs,"  @      ", universe.thermo.iterTime)
+    #end
     for d in 1:box.nDimension
         cellIndex[d] = fld(obj.position[d] - box.boundary[d,1], cellContainer.cellCutoff)
         if cellIndex[d] >= size(cellContainer.cells)[d] 
@@ -59,4 +65,7 @@ function ReCell!(universe::Universe, obj::DefectObj)
         push!(cellContainer.cells[CartesianIndex(Tuple(cellIndex))].objs, obj)
         obj.cellIndex = cellIndex
     end
+    #if universe.thermo.iterTime > 0 # == 507
+    #    println(debug[1] in universe.cellContainer.cells[1,9,7].objs,"    @    ", universe.thermo.iterTime)
+    #end
 end

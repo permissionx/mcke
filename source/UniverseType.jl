@@ -81,6 +81,9 @@ end
 function Base.push!(universe::Universe, obj::DefectObj)
     universe.maxID += 1
     obj.id = universe.maxID
+   # if obj.id == 3224
+   #     push!(debug, obj)
+   # end
     push!(universe.objs, obj)
     universe.fre += obj.eventContainer.fre
 end

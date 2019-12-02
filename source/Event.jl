@@ -1,5 +1,19 @@
 #- Disappear
 function _Execute!(universe::Universe, event::Disappear, obj::DefectObj)
+    #if obj.id == 3224
+    #    println(obj)
+    #    for cell in universe.cellContainer.cells
+    #        if obj in cell.objs
+    #            println("inininininin")
+    #            println(universe.thermo.iterTime)
+    #        end
+    #    end
+    #end
+  # if universe.thermo.iterTime > 500
+  # if debug[1] == obj 
+  #     println(universe.thermo.iterTime, " Dis")
+  # end
+  # end
     DeleteCell!(universe, obj)
     delete!(universe, obj)
     obj.dismissed = true
@@ -7,12 +21,22 @@ end
 
 #- Appear
 function _Execute!(universe::Universe, event::Appear, obj::DefectObj)
+    #if universe.thermo.iterTime > 500
+    #if debug[1] == obj 
+    #    println(universe.thermo.iterTime)
+    #end
+    #end
     push!(universe, obj)
     ReCell!(universe, obj)
 end
 
 #- Move
 function _Execute!(universe::Universe, event::Move, obj::DefectObj)
+    #if universe.thermo.iterTime > 500
+    #if debug[1] == obj 
+    #    println(universe.thermo.iterTime," Move")
+    #end
+    #end
     Shift!(obj, event.dr, universe)
     ReCell!(universe, obj)
 end
@@ -53,6 +77,16 @@ end
 
 #- Swallow
 function _Execute!(universe::Universe, event::Swallow, obj1::T, obj2::T) where {T<:Obj}
+    #if obj2.id == 3224
+    #    if obj2 in universe.cellContainer.cells[1,9,7].objs
+    #        println("true")
+    #    end
+    #    if obj2 in universe
+    #        println("ttt")
+    #    end
+    #    println(obj2)
+    #    sdf
+    #end
     # Same obj type
     if obj1.size >= obj2.size
         bigObj = obj1

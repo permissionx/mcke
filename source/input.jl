@@ -2,10 +2,10 @@ using Debugger
 
 const boundary = [0 100; 0 100; 0 100]
 const initTemp = 300.0
-const totalTime = 10
-const outputInterval = 0.1
+const totalTime = 1000
+const outputInterval = 1
 const cellCutoff = 10.0
-const boundaryCondition = "PPP"
+const boundaryCondition = "open"
 
 include("Main.jl")
 
@@ -13,9 +13,9 @@ function CustomEvents(universe::Universe)
     if universe.thermo.iterTime == 0
         universe.cache["outputTime"] = 0
         println("Start")
-        #event = IntroduceRandomDefects(100,1)
-        #DefineUniverseEvent(universe, event, 1.0)
-        Introduce!(universe, [IntroduceRandomDefects(1000,1)])
+        event = IntroduceRandomDefects(1000,1)
+        DefineUniverseEvent(universe, event, 1.0)
+        #Introduce!(universe, [IntroduceRandomDefects(1000,1)])
     end
 
     #if universe.thermo.time > universe.cache["outputTime"]
@@ -23,23 +23,25 @@ function CustomEvents(universe::Universe)
         println(universe.thermo.iterTime, " ",
                 universe.thermo.time, " ",
                 length(universe)," ",
-                universe.fre, " ",
-                universe.objs[1].position[1])
+                universe.fre, " ")
         Dump(universe, "run.dump") 
         universe.cache["outputTime"] += outputInterval
     end
+    
+ 
+    
 end
 
 function StopEvents(universe::Universe)
-    #if universe.thermo.time  >=  totalTime
-    if universe.thermo.iterTime > 100000
-        println(universe.thermo.iterTime)
-        #Dump(universe, "run.dump")
+    if universe.thermo.time  >=  totalTime
+    #if universe.thermo.iterTime > 100000
+        #println(universe.thermo.iterTime)
+        Dump(universe, "run.dump")
         universe.stop = true
     end
 end
 
-global debug= Vector()
+#global debug= Vector()
 Random.seed!(20191201)
 using BenchmarkTools
 Evolve()
