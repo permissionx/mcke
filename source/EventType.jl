@@ -25,9 +25,8 @@ struct ReSize <: BaseEvent
     newSize::Int64
 end
 
-#- High level 
 
-#-- ReSize
+#- High level 
 struct ReDirection <: HighLvlEvent
     newDirection::Vector{Int64}
 end
@@ -45,6 +44,7 @@ end
 struct ReFres <: HighLvlEvent
     newFres::Vector{Float64}
 end
+
 
 # Universe Event
 struct IntroduceRandomDefects <: UniverseEvent

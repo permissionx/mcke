@@ -7,6 +7,7 @@ mutable struct Vacancy <: DefectObj
     position::Vector{Int64}
     size::Int64
     eventContainer::EventContainer{ObjEvent}
+    cellIndex::Vector{Int64}
     dismissed::Bool
 end
 function Vacancy(position::Vector{Int64}, size::Int64)
@@ -22,7 +23,7 @@ function Vacancy(position::Vector{Int64}, size::Int64)
     fres = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]/size^3
     fre = sum(fres)
     eventContainer = EventContainer(fre, fres, events)
-    Vacancy(0, 1, position, size, eventContainer, false)
+    Vacancy(0, 1, position, size, eventContainer, Vector{Int64}(), false)
 end
 
 mutable struct Interstitial <: DefectObj
@@ -32,6 +33,7 @@ mutable struct Interstitial <: DefectObj
     size::Int64
     direction::Vector{Int64}
     eventContainer::EventContainer{ObjEvent}
+    cellIndex::Vector{Int64}
     dismissed::Bool
 end
 function Interstitial(position::Vector{Int64}, size::Int64, direction::Vector{Int64})
@@ -41,7 +43,7 @@ function Interstitial(position::Vector{Int64}, size::Int64, direction::Vector{In
     fres = [100,100]/(size^0.5)
     fre = sum(fres)
     eventContainer = EventContainer(fre, fres, events)
-    Interstitial(0, 2, position, size, direction, eventContainer, false)
+    Interstitial(0, 2, position, size, direction, eventContainer, Vector{Int64}(), false)
 end
 
 #-

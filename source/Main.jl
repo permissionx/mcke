@@ -5,6 +5,7 @@ using Random
 # Types and basic methods
 include("EventType.jl")
 include("ObjectType.jl")
+include("NeighbourObjType.jl")
 include("UniverseType.jl")
 
 # Functions 

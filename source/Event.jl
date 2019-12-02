@@ -1,5 +1,6 @@
 #- Disappear
 function _Execute!(universe::Universe, event::Disappear, obj::DefectObj)
+    DeleteCell!(universe, obj)
     delete!(universe, obj)
     obj.dismissed = true
 end
@@ -7,11 +8,13 @@ end
 #- Appear
 function _Execute!(universe::Universe, event::Appear, obj::DefectObj)
     push!(universe, obj)
+    ReCell!(universe, obj)
 end
 
 #- Move
 function _Execute!(universe::Universe, event::Move, obj::DefectObj)
     Shift!(obj, event.dr, universe)
+    ReCell!(universe, obj)
 end
 
 #- ReSize
@@ -47,6 +50,7 @@ function _Execute!(universe::Universe, event::Slip, obj::Interstitial)
     Introduce!(universe, [Move(obj.direction*event.upAndDown)], obj)
 end
 
+
 #- Swallow
 function _Execute!(universe::Universe, event::Swallow, obj1::T, obj2::T) where {T<:Obj}
     # Same obj type
@@ -57,6 +61,7 @@ function _Execute!(universe::Universe, event::Swallow, obj1::T, obj2::T) where {
         bigObj = obj2
         smallObj = obj1
     end
+    
     shiftVector = Int64.(round.(DVector(bigObj, smallObj, universe).*(smallObj.size/(bigObj.size+smallObj.size))))
     newSize = bigObj.size+smallObj.size
     Introduce!(universe, [Disappear()], smallObj)
@@ -86,16 +91,15 @@ end
 function Interact!(universe::Universe, events::Vector{ObjEvent}, obj::DefectObj, enObj::DefectObj)
 end
 
-function Interact!(universe::Universe, events::Vector{Disappear}, obj::DefectObj, enObj::DefectObj) 
+function Interact!(universe::Universe, events::Vector{Disappear}, obj::T1, enObj::T2) where {T1<:DefectObj, T2<:DefectObj}
 end
 
-function Interact!(universe::Universe, events::Vector{T3}, obj::T1, enObj::T2) where {T1<:Union{Vacancy, Interstitial}, T2<:Union{Vacancy, Interstitial}, T3<:Event}
+function Interact!(universe::Universe, events::Vector{T3}, obj::T1, enObj::T2) where {T1<:DefectObj, T2<:DefectObj, T3<:ObjEvent}
     distance = Distance(obj, enObj, universe)
     if distance <= (obj.size/4.0/3.14*3)^(1/3) + (enObj.size/4.0/3.14*3)^(1/3)
         Introduce!(universe, [Swallow()], obj, enObj)
     end
 end
-
 
 # Universe Evnets
 function _Execute!(universe::Universe, event::IntroduceRandomDefects, obj::UniverseEventHolder...)
@@ -103,9 +107,9 @@ function _Execute!(universe::Universe, event::IntroduceRandomDefects, obj::Unive
         defect = sample([1,2])
         if defect == 1
             Introduce!(universe, [Appear()], CreateRandomVacancy(universe, event.maxSize))
-            Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, event.maxSize))
+            #Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, event.maxSize))
         else
-            Introduce!(universe, [Appear()], CreateRandomVacancy(universe, event.maxSize))
+            #Introduce!(universe, [Appear()], CreateRandomVacancy(universe, event.maxSize))
             Introduce!(universe, [Appear()], CreateRandomInterstitial(universe, event.maxSize))
         end
     end

@@ -10,9 +10,12 @@ end
 
 # Neccessary Appendix
 function Interact!(universe::Universe, events::Vector{T}, obj::DefectObj) where {T <: ObjEvent}
+    #enObjs = universe.objs
     enObjs = FindNeighbourObjs(universe, obj)
+    #for i in 1:length(enObjs)
+    #    enObj = enObjs[i]
     for enObj in enObjs
-        if enObj == obj
+        if enObj == obj 
             continue
         end
         Interact!(universe, events, obj, enObj)
@@ -22,24 +25,23 @@ function Interact!(universe::Universe, events::Vector{T}, obj::DefectObj) where 
     end
 end
 
-
 function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) where {T <: ObjEvent}
     # Maybe dangerous here, because the other objs not examined if dismissed.
     # So, other objs have to be chosen from the universe, making sure the existing of the objs.
+    if obj[1].dismissed
+        return
+    end
     for event in events
-        if obj[1].dismissed
-            return
-        end
         _Execute!(universe, event, obj...)
     end
     Interact!(universe, events, obj[1])
 end
 
 function Introduce!(universe::Universe, events::Vector{T}, obj::DefectObj...) where {T <: HighLvlEvent}
+    if obj[1].dismissed
+        return
+    end
     for event in events
-        if obj[1].dismissed
-            return
-        end
         _Execute!(universe, event, obj...)
     end
 end
@@ -148,6 +150,3 @@ function Dump(universe::Universe, filename::String)
         end
     end
 end
-
-
-

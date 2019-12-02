@@ -32,10 +32,28 @@ function Thermo(initTemp::Float64)
 end
 
 EventContainer{UniverseEvent}() = EventContainer{UniverseEvent}(0,[],[])
+
+function CellContainer(box::Box, cellCutoff::Float64)
+    nDimension = box.nDimension
+    dCellIndexs = DCellIndexs(nDimension)
+    lengths = Vector{Int64}(undef, nDimension)
+    for d in 1:nDimension
+        lo = fld(box.boundary[d,1],cellCutoff)
+        hi = fld(box.boundary[d,2],cellCutoff)-1
+        lengths[d] = hi-lo
+    end
+    cells = Array{Cell}(undef, Tuple(lengths))
+    for index = 1:length(cells)
+        cells[index] = Cell(Vector{DefectObj}())
+    end
+    CellContainer(cells, cellCutoff, dCellIndexs)
+end
+
 # Global type Universe
 # Contain all the objects and universal properties
 mutable struct Universe
     objs::Vector{DefectObj}
+    cellContainer::CellContainer
     universeEventHolders::Vector{UniverseEventHolder}
     maxID::Int64
     fre::Float64
@@ -47,10 +65,11 @@ mutable struct Universe
 end
 function Universe(boundary, initTemp)
     box = Box(boundary)
+    cellContainer = CellContainer(box, cellCutoff)
     thermo = Thermo(initTemp)
     universeEventContainer = EventContainer{UniverseEvent}()
     universeEventHolder = UniverseEventHolder(universeEventContainer)
-    Universe(Vector{DefectObj}(), [universeEventHolder], 
+    Universe(Vector{DefectObj}(), cellContainer, [universeEventHolder], 
             0, 0, box, thermo, 
             Vector{String}(), Dict{String, Union{Int64, Float64}}(), false)
 end

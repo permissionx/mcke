@@ -31,3 +31,32 @@ function IterIntersitialDirections!(directions::Vector{Vector{Int64}},
         end
     end
 end
+
+function DeleteCell!(universe::Universe, obj::DefectObj)
+    cellIndex = obj.cellIndex
+    cell = universe.cellContainer.cells[CartesianIndex(Tuple(cellIndex))]
+    filter!(o->o!=obj,cell.objs)
+end
+
+function ReCell!(universe::Universe, obj::DefectObj)
+    box = universe.box
+    cellContainer = universe.cellContainer
+    cellIndex = Vector{Int64}(undef, box.nDimension)
+    for d in 1:box.nDimension
+        cellIndex[d] = fld(obj.position[d] - box.boundary[d,1], cellContainer.cellCutoff)
+        if cellIndex[d] >= size(cellContainer.cells)[d] 
+            cellIndex[d] -= 2
+        end
+        if cellIndex[d] < 0
+            cellIndex[d] = 0
+        end
+        cellIndex[d] += 1
+    end
+    if cellIndex != obj.cellIndex
+        if obj.cellIndex != [] 
+            DeleteCell!(universe, obj)
+        end
+        push!(cellContainer.cells[CartesianIndex(Tuple(cellIndex))].objs, obj)
+        obj.cellIndex = cellIndex
+    end
+end
